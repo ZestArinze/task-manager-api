@@ -66,7 +66,7 @@ export class ProjectsController {
       userId: user.id,
       userIdFieldInSubject: 'user_id',
       subjectQueryOptions: {
-        tableName: 'permission',
+        tableName: 'project',
         colName: 'id',
         value: id,
       },
@@ -113,7 +113,7 @@ export class ProjectsController {
       userId: user.id,
       userIdFieldInSubject: 'user_id',
       subjectQueryOptions: {
-        tableName: 'permission',
+        tableName: 'project',
         colName: 'id',
         value: id,
       },

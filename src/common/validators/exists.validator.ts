@@ -11,7 +11,7 @@ import { EntityManager } from 'typeorm';
 export interface ExistsConstraintInput {
   table: string;
   col: string;
-  inputProperty?: string | number;
+  inputProperty: string | number;
 }
 
 export interface ExistsValidationOptions extends ValidationOptions {
