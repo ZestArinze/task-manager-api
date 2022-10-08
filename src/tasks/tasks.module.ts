@@ -9,5 +9,6 @@ import { BasicPermissionHelper } from '../auth/helpers/basic-permission-helper';
   controllers: [TasksController],
   providers: [TasksService, BasicPermissionHelper],
   imports: [TypeOrmModule.forFeature([Task])],
+  exports: [TasksService],
 })
 export class TasksModule {}

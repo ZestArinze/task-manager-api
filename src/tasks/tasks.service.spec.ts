@@ -7,6 +7,10 @@ import { TasksService } from './tasks.service';
 describe('TasksService', () => {
   let service: TasksService;
 
+  const user = {
+    id: 1,
+  };
+
   const project = {
     id: 1,
     title: 'Project XYZ',
@@ -66,5 +70,36 @@ describe('TasksService', () => {
     const result = await service.update(task.id, taskData);
 
     expect(result).toBe(1);
+  });
+
+  it('should get collection of task', async () => {
+    const task = await service.create(taskData);
+
+    const result = await service.findMany({
+      search: task.title,
+      user_id: user.id,
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      title: task.title,
+      project: {
+        id: project.id,
+      },
+    });
+
+    const result2 = await service.findMany({
+      project_id: project.id,
+      user_id: user.id,
+    });
+
+    expect(result2).toHaveLength(1);
+
+    expect(result2[0]).toMatchObject({
+      project_id: project.id,
+      project: {
+        id: project.id,
+      },
+    });
   });
 });

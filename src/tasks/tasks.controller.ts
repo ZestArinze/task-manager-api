@@ -15,6 +15,7 @@ import { User } from '../users/entities/user.entity';
 import { TaskQuery } from './dto/task.query';
 import { BasicPermissionHelper } from '../auth/helpers/basic-permission-helper';
 import { UpdateResultQuery } from '../common/dtos/update-result.query';
+import { SearchTasksDto } from './dto/search-tasks.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -47,9 +48,16 @@ export class TasksController {
     };
   }
 
-  @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  @Post('index')
+  async findMany(@Body() dto: SearchTasksDto, @AuthUser() user: User) {
+    dto.user_id = user.id;
+
+    const result = await this.tasksService.findMany(dto);
+
+    return {
+      successful: true,
+      data: result,
+    };
   }
 
   @Get(':id')

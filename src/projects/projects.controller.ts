@@ -1,29 +1,31 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { ProjectsService } from './projects.service';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
-import { User } from '../users/entities/user.entity';
-import { ProjectQuery } from './dto/project.query';
-import { SearchProjectsDto } from './dto/search-projects.dto';
-import { ProjectsQuery } from './dto/projects.query';
-import { UpdateResultQuery } from '../common/dtos/update-result.query';
-import { DeleteResultQuery } from '../common/dtos/delete-result.query';
 import { BasicPermissionHelper } from '../auth/helpers/basic-permission-helper';
+import { DeleteResultQuery } from '../common/dtos/delete-result.query';
+import { UpdateResultQuery } from '../common/dtos/update-result.query';
+import { TasksService } from '../tasks/tasks.service';
+import { User } from '../users/entities/user.entity';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { ProjectQuery } from './dto/project.query';
+import { ProjectsQuery } from './dto/projects.query';
+import { SearchProjectsDto } from './dto/search-projects.dto';
+import { UpdateProjectDto } from './dto/update-project.dto';
+import { ProjectsService } from './projects.service';
 
 @Controller('projects')
 export class ProjectsController {
   constructor(
     private readonly projectsService: ProjectsService,
     private readonly permissionHelper: BasicPermissionHelper,
+    private readonly tasksService: TasksService,
   ) {}
 
   @Post()
@@ -118,6 +120,18 @@ export class ProjectsController {
         value: id,
       },
     });
+
+    const projectTasksCount = await this.tasksService.getCount({
+      project_id: +id,
+    });
+
+    if (projectTasksCount > 0) {
+      return {
+        successful: false,
+        message: 'You cannot delete the selected project becuase it has tasks',
+        data: null,
+      };
+    }
 
     const result = await this.projectsService.remove(+id);
 
