@@ -10,6 +10,7 @@ import { ValidationError } from 'class-validator';
 import { formatValidationError } from './common/utils/error.utils';
 import { ValidationException } from './common/dtos/validation.exception';
 import { JwtGuard } from './auth/guards/jwt.guard';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { JwtGuard } from './auth/guards/jwt.guard';
     }),
     UsersModule,
     AuthModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [
