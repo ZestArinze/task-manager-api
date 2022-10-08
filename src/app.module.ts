@@ -1,15 +1,18 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ValidationError } from 'class-validator';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_GUARD, APP_PIPE } from '@nestjs/core';
-import { ValidationError } from 'class-validator';
-import { formatValidationError } from './common/utils/error.utils';
-import { ValidationException } from './common/dtos/validation.exception';
 import { JwtGuard } from './auth/guards/jwt.guard';
+import { ValidationException } from './common/dtos/validation.exception';
+import { formatValidationError } from './common/utils/error.utils';
+import { ExistsConstraint } from './common/validators/exists.validator';
+import { NotExistsConstraint } from './common/validators/not-exists.validator';
+import { ProjectsModule } from './projects/projects.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -41,6 +44,7 @@ import { JwtGuard } from './auth/guards/jwt.guard';
     }),
     UsersModule,
     AuthModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -62,6 +66,8 @@ import { JwtGuard } from './auth/guards/jwt.guard';
       provide: APP_GUARD,
       useClass: JwtGuard,
     },
+    ExistsConstraint,
+    NotExistsConstraint,
   ],
 })
 export class AppModule {}
