@@ -15,6 +15,8 @@ import { User } from '../users/entities/user.entity';
 import { ProjectQuery } from './dto/project.query';
 import { SearchProjectsDto } from './dto/search-projects.dto';
 import { ProjectsQuery } from './dto/projects.query';
+import { UpdateResultQuery } from '../common/dtos/update-result.query';
+import { DeleteResultQuery } from '../common/dtos/delete-result.query';
 
 @Controller('projects')
 export class ProjectsController {
@@ -60,17 +62,22 @@ export class ProjectsController {
   async update(
     @Param('id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,
-  ) {
+  ): Promise<UpdateResultQuery> {
     const result = await this.projectsService.update(+id, updateProjectDto);
 
     return {
       successful: !!result,
-      data: result,
+      data: { affected: result },
     };
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.projectsService.remove(+id);
+  async remove(@Param('id') id: string): Promise<DeleteResultQuery> {
+    const result = await this.projectsService.remove(+id);
+
+    return {
+      successful: !!result,
+      data: { affected: result },
+    };
   }
 }

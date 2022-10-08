@@ -37,8 +37,10 @@ export class ProjectsService {
     return result.affected;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  async remove(id: number) {
+    const result = await this.projectsRepository.delete({ id });
+
+    return result.affected;
   }
 
   searchQuery(dto: SearchProjectsDto) {

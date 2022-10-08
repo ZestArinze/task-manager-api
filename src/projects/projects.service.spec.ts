@@ -91,7 +91,7 @@ describe('ProjectsService', () => {
     });
   });
 
-  it('should get one  project', async () => {
+  it('should get one project', async () => {
     const project = await service.create(projectData);
     const result = await service.findOne(project.id);
 
@@ -102,5 +102,12 @@ describe('ProjectsService', () => {
         id: user.id,
       },
     });
+  });
+
+  it('should delete project', async () => {
+    const project = await service.create(projectData);
+    const result = await service.remove(project.id);
+
+    expect(result).toBe(1);
   });
 });
