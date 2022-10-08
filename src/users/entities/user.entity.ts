@@ -1,5 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { AppBaseEntity } from '../../common/app-base-entity';
+import { Project } from '../../projects/entities/project.entity';
 
 @Entity()
 export class User extends AppBaseEntity {
@@ -14,4 +15,7 @@ export class User extends AppBaseEntity {
 
   @Column()
   last_name: string;
+
+  @OneToMany(() => Project, (project) => project.user)
+  projects: Project[];
 }
