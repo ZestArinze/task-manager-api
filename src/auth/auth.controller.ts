@@ -3,6 +3,7 @@ import { LoginQuery } from '../users/dtos/login.query';
 import { UserQuery } from '../users/dtos/user.query';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from './auth.service';
+import { AllowGuest } from './decorators/allow-guest.decorator';
 import { AuthUser } from './decorators/auth-user.decorator';
 import { LoginDto } from './dtos/login.dto';
 import { SignupDto } from './dtos/signup.dto';
@@ -12,6 +13,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
+  @AllowGuest()
   async signup(@Body() dto: SignupDto): Promise<UserQuery> {
     const result = await this.authService.signup(dto);
 
@@ -23,6 +25,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @AllowGuest()
   async login(@Body() dto: LoginDto): Promise<LoginQuery> {
     const result = await this.authService.login(dto);
 
