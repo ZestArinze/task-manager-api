@@ -17,4 +17,18 @@ export class UsersService {
 
     return user;
   }
+
+  async findOne(username: string, options?: { selectSecrets: boolean }) {
+    const query = this.usersRepository
+      .createQueryBuilder('user')
+      .select('user');
+
+    if (options && options.selectSecrets) {
+      query.addSelect(['user.password']);
+    }
+
+    query.where('user.username = :username', { username });
+
+    return await query.getOne();
+  }
 }

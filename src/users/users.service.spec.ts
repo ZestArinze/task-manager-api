@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { SignupDto } from '../auth/dtos/signup.dto';
 import { typeormPartialMock } from '../common/utils/test.utils';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
