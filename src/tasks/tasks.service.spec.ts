@@ -26,9 +26,6 @@ describe('TasksService', () => {
     save: jest.fn().mockImplementation((dto) => {
       return Promise.resolve({ id: Date.now(), ...dto });
     }),
-    update: jest.fn().mockImplementation((dto) => {
-      return { affected: 1 };
-    }),
     getMany: jest.fn().mockImplementation(() => {
       return [{ ...taskData, project: project }];
     }),
@@ -62,5 +59,12 @@ describe('TasksService', () => {
       id: expect.any(Number),
       title: taskData.title,
     });
+  });
+
+  it('should update task', async () => {
+    const task = await service.create(taskData);
+    const result = await service.update(task.id, taskData);
+
+    expect(result).toBe(1);
   });
 });

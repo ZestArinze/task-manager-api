@@ -25,8 +25,10 @@ export class TasksService {
     return `This action returns a #${id} task`;
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: number, dto: UpdateTaskDto) {
+    const result = await this.tasksRepository.update({ id: id }, dto);
+
+    return result.affected;
   }
 
   remove(id: number) {

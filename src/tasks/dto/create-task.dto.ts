@@ -1,4 +1,10 @@
-import { IsDate, IsInt, IsOptional, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsInt,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 import { Exists } from '../../common/validators/exists.validator';
 
 export class CreateTaskDto {
@@ -9,11 +15,12 @@ export class CreateTaskDto {
   @IsOptional()
   description?: string;
 
-  @IsDate()
+  @IsDateString()
   @IsOptional()
   completed_at?: Date;
 
   @IsInt()
+  @Min(1)
   @Exists({
     context: {
       table: 'project',

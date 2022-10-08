@@ -24,6 +24,9 @@ export class BasicPermissionHelper {
 
     if (subjectQueryOptions) {
       const { tableName, colName, value } = subjectQueryOptions;
+      if (!value) {
+        throw new UnauthorizedException(this.message);
+      }
 
       const record = await this.entityManager
         .getRepository(tableName)

@@ -26,9 +26,7 @@ describe('ProjectsService', () => {
     save: jest.fn().mockImplementation((dto) => {
       return Promise.resolve({ id: Date.now(), ...dto });
     }),
-    update: jest.fn().mockImplementation((dto) => {
-      return { affected: 1 };
-    }),
+
     getMany: jest.fn().mockImplementation(() => {
       return [{ ...projectData, user: user }];
     }),
