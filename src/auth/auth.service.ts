@@ -65,10 +65,16 @@ export class AuthService {
     return user;
   }
 
-  async verifyAndGetTokenData(token: string) {
-    return jwt.verify(
-      token,
-      this.configService.get<string>('JWT_SECRET'),
-    ) as JwtTokenPayload;
+  async verifyAndGetTokenData(token: string): Promise<JwtTokenPayload | null> {
+    let payload = null;
+
+    try {
+      payload = jwt.verify(
+        token,
+        this.configService.get<string>('JWT_SECRET'),
+      ) as JwtTokenPayload;
+    } catch (error) {}
+
+    return payload;
   }
 }

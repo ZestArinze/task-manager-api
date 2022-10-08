@@ -20,14 +20,14 @@ export class UpdateTaskDto {
   @IsOptional()
   completed_at?: Date;
 
-  @IsInt()
-  @Min(1)
-  @Exists({
-    context: {
-      table: 'project',
-      col: 'id',
-      inputProperty: 'project_id',
-    },
-  })
-  project_id: number;
+  //   @IsInt()
+  //   @Min(1)
+  //   @Exists({
+  //     context: {
+  //       table: 'project',
+  //       col: 'id',
+  //       inputProperty: 'project_id',
+  //     },
+  //   })
+  //   project_id: number;
 }

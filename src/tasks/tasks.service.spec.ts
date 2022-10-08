@@ -102,4 +102,17 @@ describe('TasksService', () => {
       },
     });
   });
+
+  it('should get one task', async () => {
+    const task = await service.create(taskData);
+    const result = await service.findOne(task.id);
+
+    expect(result).toMatchObject({
+      title: taskData.title,
+      project_id: taskData.project_id,
+      project: {
+        id: taskData.project_id,
+      },
+    });
+  });
 });

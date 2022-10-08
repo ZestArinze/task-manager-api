@@ -61,7 +61,7 @@ export class ProjectsController {
 
   @Get(':id')
   async findOne(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @AuthUser() user: User,
   ): Promise<ProjectQuery> {
     await this.permissionHelper.checkPermission({
@@ -74,7 +74,7 @@ export class ProjectsController {
       },
     });
 
-    const result = await this.projectsService.findOne(+id);
+    const result = await this.projectsService.findOne(id);
 
     return {
       successful: true,
@@ -84,7 +84,7 @@ export class ProjectsController {
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id') id: null,
     @Body() updateProjectDto: UpdateProjectDto,
     @AuthUser() user: User,
   ): Promise<UpdateResultQuery> {
@@ -98,7 +98,7 @@ export class ProjectsController {
       },
     });
 
-    const result = await this.projectsService.update(+id, updateProjectDto);
+    const result = await this.projectsService.update(id, updateProjectDto);
 
     return {
       successful: !!result,
@@ -108,7 +108,7 @@ export class ProjectsController {
 
   @Delete(':id')
   async remove(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @AuthUser() user: User,
   ): Promise<DeleteResultQuery> {
     await this.permissionHelper.checkPermission({
@@ -122,7 +122,7 @@ export class ProjectsController {
     });
 
     const projectTasksCount = await this.tasksService.getCount({
-      project_id: +id,
+      project_id: id,
     });
 
     if (projectTasksCount > 0) {
@@ -133,7 +133,7 @@ export class ProjectsController {
       };
     }
 
-    const result = await this.projectsService.remove(+id);
+    const result = await this.projectsService.remove(id);
 
     return {
       successful: !!result,

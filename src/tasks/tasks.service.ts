@@ -27,8 +27,10 @@ export class TasksService {
     return query.select(['task', 'project.user_id', 'project.id']).getMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  async findOne(id: number) {
+    return await this.tasksRepository.findOne({
+      where: { id: id },
+    });
   }
 
   async update(id: number, dto: UpdateTaskDto) {
