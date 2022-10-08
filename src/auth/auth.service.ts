@@ -64,4 +64,11 @@ export class AuthService {
 
     return user;
   }
+
+  async verifyAndGetTokenData(token: string) {
+    return jwt.verify(
+      token,
+      this.configService.get<string>('JWT_SECRET'),
+    ) as JwtTokenPayload;
+  }
 }

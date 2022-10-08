@@ -1,7 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { LoginQuery } from '../users/dtos/login.query';
 import { UserQuery } from '../users/dtos/user.query';
+import { User } from '../users/entities/user.entity';
 import { AuthService } from './auth.service';
+import { AuthUser } from './decorators/auth-user.decorator';
 import { LoginDto } from './dtos/login.dto';
 import { SignupDto } from './dtos/signup.dto';
 
@@ -28,6 +30,14 @@ export class AuthController {
       successful: true,
       message: 'Login successful',
       data: { access_token: result },
+    };
+  }
+
+  @Get('user')
+  async authenticatedUser(@AuthUser() user: User): Promise<UserQuery> {
+    return {
+      successful: true,
+      data: user,
     };
   }
 }
