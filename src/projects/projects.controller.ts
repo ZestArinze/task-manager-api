@@ -13,6 +13,8 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { ProjectQuery } from './dto/project.query';
+import { SearchProjectsDto } from './dto/search-projects.dto';
+import { ProjectsQuery } from './dto/projects.query';
 
 @Controller('projects')
 export class ProjectsController {
@@ -34,14 +36,24 @@ export class ProjectsController {
     };
   }
 
-  @Get()
-  async findAll() {
-    return this.projectsService.findAll();
+  @Post('index')
+  async findMany(@Body() dto: SearchProjectsDto): Promise<ProjectsQuery> {
+    const result = await this.projectsService.findMany(dto);
+
+    return {
+      successful: true,
+      data: result,
+    };
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<ProjectQuery> {
+    const result = await this.projectsService.findOne(+id);
+
+    return {
+      successful: true,
+      data: result,
+    };
   }
 
   @Patch(':id')
