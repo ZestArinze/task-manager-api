@@ -44,11 +44,11 @@ export class ProjectsService {
   }
 
   searchQuery(dto: SearchProjectsDto) {
-    console.log({ dto });
+    const { user_id, search, title } = dto;
 
-    const { search, title } = dto;
-
-    const query = this.projectsRepository.createQueryBuilder('project');
+    const query = this.projectsRepository
+      .createQueryBuilder('project')
+      .andWhere('project.user_id = :user_id', { user_id });
 
     if (search) {
       query.andWhere(
