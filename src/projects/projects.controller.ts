@@ -17,10 +17,14 @@ import { SearchProjectsDto } from './dto/search-projects.dto';
 import { ProjectsQuery } from './dto/projects.query';
 import { UpdateResultQuery } from '../common/dtos/update-result.query';
 import { DeleteResultQuery } from '../common/dtos/delete-result.query';
+import { BasicPermissionHelper } from '../auth/helpers/basic-permission-helper';
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(
+    private readonly projectsService: ProjectsService,
+    private readonly permissionHelper: BasicPermissionHelper,
+  ) {}
 
   @Post()
   async create(
@@ -39,7 +43,12 @@ export class ProjectsController {
   }
 
   @Post('index')
-  async findMany(@Body() dto: SearchProjectsDto): Promise<ProjectsQuery> {
+  async findMany(
+    @Body() dto: SearchProjectsDto,
+    @AuthUser() user: User,
+  ): Promise<ProjectsQuery> {
+    dto.user_id = user.id;
+
     const result = await this.projectsService.findMany(dto);
 
     return {
@@ -49,7 +58,20 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<ProjectQuery> {
+  async findOne(
+    @Param('id') id: string,
+    @AuthUser() user: User,
+  ): Promise<ProjectQuery> {
+    await this.permissionHelper.checkPermission({
+      userId: user.id,
+      userIdFieldInSubject: 'user_id',
+      subjectQueryOptions: {
+        tableName: 'permission',
+        colName: 'id',
+        value: id,
+      },
+    });
+
     const result = await this.projectsService.findOne(+id);
 
     return {
@@ -62,7 +84,18 @@ export class ProjectsController {
   async update(
     @Param('id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,
+    @AuthUser() user: User,
   ): Promise<UpdateResultQuery> {
+    await this.permissionHelper.checkPermission({
+      userId: user.id,
+      userIdFieldInSubject: 'user_id',
+      subjectQueryOptions: {
+        tableName: 'project',
+        colName: 'id',
+        value: id,
+      },
+    });
+
     const result = await this.projectsService.update(+id, updateProjectDto);
 
     return {
@@ -72,7 +105,20 @@ export class ProjectsController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<DeleteResultQuery> {
+  async remove(
+    @Param('id') id: string,
+    @AuthUser() user: User,
+  ): Promise<DeleteResultQuery> {
+    await this.permissionHelper.checkPermission({
+      userId: user.id,
+      userIdFieldInSubject: 'user_id',
+      subjectQueryOptions: {
+        tableName: 'permission',
+        colName: 'id',
+        value: id,
+      },
+    });
+
     const result = await this.projectsService.remove(+id);
 
     return {

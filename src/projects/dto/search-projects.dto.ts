@@ -8,4 +8,6 @@ export class SearchProjectsDto {
   @IsString()
   @IsOptional()
   title?: string;
+
+  user_id: number;
 }

@@ -74,11 +74,14 @@ describe('ProjectsService', () => {
   it('should get collection of projects', async () => {
     const project = await service.create(projectData);
 
-    const result = await service.findMany({});
+    const result = await service.findMany({
+      user_id: user.id,
+    });
     expect(result).toHaveLength(1);
 
     const result2 = await service.findMany({
       title: project.title,
+      user_id: user.id,
     });
     expect(result2).toHaveLength(1);
 
