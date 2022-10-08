@@ -1,31 +1,39 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { EntityManager } from 'typeorm';
+
+export type CheckPermissionPayload = {
+  userId: number;
+  userIdFieldInSubject: string;
+  subjectQueryOptions?: {
+    tableName: string;
+    colName: string;
+    value: string | number;
+  };
+
+  subject?: Record<string, any>;
+};
+
+export const unauthorizedMessage =
+  'You do not have the permission to peform to perform that action';
 
 @Injectable()
 export class BasicPermissionHelper {
-  private message =
-    'You do not have the permission to peform to perform that action';
   constructor(private readonly entityManager: EntityManager) {}
 
-  async checkPermission(data: {
-    userId: number;
-    userIdFieldInSubject: string;
-    subjectQueryOptions?: {
-      tableName: string;
-      colName: string;
-      value: string | number;
-    };
-
-    subject?: Record<string, any>;
-  }) {
+  async checkPermission(data: CheckPermissionPayload) {
     const { userId, userIdFieldInSubject, subjectQueryOptions, subject } = data;
 
     let passes = false;
 
     if (subjectQueryOptions) {
       const { tableName, colName, value } = subjectQueryOptions;
+
       if (!value) {
-        throw new UnauthorizedException(this.message);
+        throw new UnauthorizedException(unauthorizedMessage);
       }
 
       const record = await this.entityManager
@@ -33,6 +41,10 @@ export class BasicPermissionHelper {
         .createQueryBuilder(tableName)
         .where({ [colName]: value }) // ?
         .getOne();
+
+      if (!record) {
+        throw new NotFoundException();
+      }
 
       passes =
         record &&
@@ -43,7 +55,7 @@ export class BasicPermissionHelper {
     }
 
     if (!passes) {
-      throw new UnauthorizedException(this.message);
+      throw new UnauthorizedException(unauthorizedMessage);
     }
   }
 }

@@ -115,4 +115,11 @@ describe('TasksService', () => {
       },
     });
   });
+
+  it('should delete task', async () => {
+    const task = await service.create(taskData);
+    const result = await service.remove(task.id);
+
+    expect(result).toBe(1);
+  });
 });

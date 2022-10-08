@@ -6,9 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
-import { BasicPermissionHelper } from '../auth/helpers/basic-permission-helper';
+import {
+  BasicPermissionHelper,
+  unauthorizedMessage,
+} from '../auth/helpers/basic-permission-helper';
 import { UpdateResultQuery } from '../common/dtos/update-result.query';
 import { User } from '../users/entities/user.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -29,15 +33,7 @@ export class TasksController {
     @Body() dto: CreateTaskDto,
     @AuthUser() user: User,
   ): Promise<TaskQuery> {
-    await this.permissionHelper.checkPermission({
-      userId: user.id,
-      userIdFieldInSubject: 'user_id',
-      subjectQueryOptions: {
-        tableName: 'project',
-        colName: 'id',
-        value: dto.project_id,
-      },
-    });
+    await this.checkPermissionById(user.id, null, dto.project_id);
 
     const result = await this.tasksService.create(dto);
 
@@ -65,16 +61,7 @@ export class TasksController {
     @Param('id') id: number,
     @AuthUser() user: User,
   ): Promise<TaskQuery> {
-    const task = await this.tasksService.findOne(id);
-    await this.permissionHelper.checkPermission({
-      userId: user.id,
-      userIdFieldInSubject: 'user_id',
-      subjectQueryOptions: {
-        tableName: 'project',
-        colName: 'id',
-        value: task.project_id,
-      },
-    });
+    await this.checkPermissionById(user.id, id);
 
     const result = await this.tasksService.findOne(id);
 
@@ -91,15 +78,15 @@ export class TasksController {
     @AuthUser() user: User,
   ): Promise<UpdateResultQuery> {
     const task = await this.tasksService.findOne(id);
-    await this.permissionHelper.checkPermission({
-      userId: user.id,
-      userIdFieldInSubject: 'user_id',
-      subjectQueryOptions: {
-        tableName: 'project',
-        colName: 'id',
-        value: task.project_id,
-      },
-    });
+
+    await this.checkPermissionById(user.id, null, task?.project_id);
+
+    if (task?.completed_at) {
+      return {
+        successful: false,
+        message: 'You cannot edit a completed task',
+      };
+    }
 
     const result = await this.tasksService.update(id, dto);
 
@@ -112,7 +99,51 @@ export class TasksController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.tasksService.remove(id);
+  async remove(@Param('id') id: number, @AuthUser() user: User) {
+    const task = await this.tasksService.findOne(id);
+    await this.checkPermissionById(user.id, null, task?.project_id);
+    if (task?.completed_at) {
+      return {
+        successful: false,
+        message: 'You cannot delete a completed task',
+      };
+    }
+
+    const result = await this.tasksService.remove(id);
+
+    return {
+      successful: !!result,
+      data: { affected: result },
+    };
+  }
+
+  async checkPermissionById(
+    userId: number,
+    id: number | null,
+    taskProjectId?: number,
+  ) {
+    let projectId: number;
+
+    if (taskProjectId) {
+      projectId = taskProjectId;
+    } else {
+      if (!id) {
+        throw new UnauthorizedException(unauthorizedMessage);
+      }
+
+      const task = await this.tasksService.findOne(id);
+
+      projectId = task?.project_id;
+    }
+
+    await this.permissionHelper.checkPermission({
+      userId: userId,
+      userIdFieldInSubject: 'user_id',
+      subjectQueryOptions: {
+        tableName: 'project',
+        colName: 'id',
+        value: projectId,
+      },
+    });
   }
 }

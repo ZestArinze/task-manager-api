@@ -20,8 +20,6 @@ export class TasksService {
   }
 
   async findMany(dto: SearchTasksDto) {
-    console.log(dto);
-
     const query = this.searchQuery(dto);
 
     return query.select(['task', 'project.user_id', 'project.id']).getMany();
@@ -39,8 +37,10 @@ export class TasksService {
     return result.affected;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async remove(id: number) {
+    const result = await this.tasksRepository.delete({ id });
+
+    return result.affected;
   }
 
   async getCount(dto: Partial<SearchTasksDto>) {
