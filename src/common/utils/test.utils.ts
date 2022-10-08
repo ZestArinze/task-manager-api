@@ -7,9 +7,11 @@ export const typeormPartialMock = {
 
   addSelect: jest.fn().mockReturnThis(),
   leftJoin: jest.fn().mockReturnThis(),
-  update: jest.fn().mockReturnThis(),
   set: jest.fn().mockReturnThis(),
 
   execute: jest.fn().mockReturnValue({ affected: 1 }),
   delete: jest.fn().mockReturnValue({ affected: 1 }),
+  update: jest.fn().mockImplementation((dto) => {
+    return { affected: 1 };
+  }),
 };

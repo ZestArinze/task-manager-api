@@ -28,7 +28,10 @@ export class ProjectsService {
   }
 
   findOne(id: number) {
-    return this.projectsRepository.findOne({ where: { id: id } });
+    return this.projectsRepository.findOne({
+      where: { id: id },
+      relations: ['tasks'],
+    });
   }
 
   async update(id: number, dto: UpdateProjectDto) {
