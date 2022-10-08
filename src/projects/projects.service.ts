@@ -25,8 +25,10 @@ export class ProjectsService {
     return `This action returns a #${id} project`;
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async update(id: number, dto: UpdateProjectDto) {
+    const result = await this.projectsRepository.update({ id: id }, dto);
+
+    return result.affected;
   }
 
   remove(id: number) {

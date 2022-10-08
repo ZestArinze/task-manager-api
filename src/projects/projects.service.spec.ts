@@ -21,6 +21,9 @@ describe('ProjectsService', () => {
     save: jest.fn().mockImplementation((dto) => {
       return Promise.resolve({ id: Date.now(), ...dto });
     }),
+    update: jest.fn().mockImplementation((dto) => {
+      return { affected: 1 };
+    }),
   };
 
   beforeEach(async () => {
@@ -48,5 +51,12 @@ describe('ProjectsService', () => {
       id: expect.any(Number),
       title: projectData.title,
     });
+  });
+
+  it('should update project', async () => {
+    const project = await service.create(projectData);
+    const result = await service.update(project.id, projectData);
+
+    expect(result).toBe(1);
   });
 });
