@@ -12,10 +12,11 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle('EduPadi API')
-    .setDescription('The EduPadi API description')
+    .setTitle('Task manager API')
+    .setDescription('The task manager description')
     .setVersion('1.0')
-    .addTag('edupadi')
+    .addTag('task')
+    .addTag('task')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
