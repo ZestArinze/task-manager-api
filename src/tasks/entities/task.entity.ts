@@ -7,7 +7,7 @@ export class Task extends AppBaseEntity {
   @Column()
   title: string;
 
-  @Column({ nullable: true })
+  @Column()
   description: string;
 
   @Column({ type: 'datetime', nullable: true })

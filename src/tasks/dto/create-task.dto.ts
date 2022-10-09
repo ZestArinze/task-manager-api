@@ -12,8 +12,7 @@ export class CreateTaskDto {
   title: string;
 
   @IsString()
-  @IsOptional()
-  description?: string;
+  description: string;
 
   @IsDateString()
   @IsOptional()

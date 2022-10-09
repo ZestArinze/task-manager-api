@@ -23,7 +23,8 @@ export class ProjectsService {
 
     return query
       .leftJoin('project.user', 'user')
-      .select(['project', 'user.id'])
+      .leftJoin('project.tasks', 'task')
+      .select(['project', 'task'])
       .getMany();
   }
 
