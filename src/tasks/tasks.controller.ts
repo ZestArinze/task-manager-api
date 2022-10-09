@@ -92,6 +92,7 @@ export class TasksController {
 
     return {
       successful: !!result,
+      message: result > 0 ? 'Task updated' : null,
       data: {
         affected: result,
       },
@@ -113,6 +114,7 @@ export class TasksController {
 
     return {
       successful: !!result,
+
       data: { affected: result },
     };
   }

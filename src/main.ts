@@ -5,6 +5,10 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: '*', // allowing all for our demo app
+  });
+
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   const port = process.env.PORT || 5000;
